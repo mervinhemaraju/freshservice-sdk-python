@@ -33,7 +33,12 @@ class Ticket(TicketModel):
         except Exception as e:
             raise FreshserviceTicketException(f"Error occurred while getting {id}: {e}")
 
-        # TODO(Add class unique attributes)
+        # * Unique class attributes
+        self.attachments = schema.get('attachments', None)
+        self.email = schema.get('email', None)
+        self.name = schema.get('name', None)
+        self.tags = schema.get('tags', None)
+        self.type = schema.get('type', None)
 
         # * Pass values to the parent class
         super().__init__(
@@ -57,18 +62,54 @@ class Ticket(TicketModel):
             item_category=schema['item_category']
         )
 
+    def asdict(self):
+
+        # * Convert class attributes to dict
+        the_dict = dict(vars(self))
+
+        # * Remove unnecessary attributes
+        the_dict.pop('id')
+        the_dict.pop('created_at')
+        the_dict.pop('updated_at')
+        the_dict.pop('description_text')
+        the_dict.pop('auth')
+        the_dict.pop('attachments')
+
+        # * Return the dict
+        return the_dict
+
     @staticmethod
     def create() -> Ticket: 
         # TODO(Implement)
         pass
 
-    def close() -> None: 
-        # TODO(Implement)
-        pass
+    def close(self) -> None: 
+
+        # * Create the url
+        url = self.URL_PREFIX.format(self.id)
+
+        # * Create the dict attributes
+        dict_attr = self.asdict()
+
+        # * Change the status of the ticket to close
+        dict_attr['status'] = self.Status.CLOSED.value
+
+        # * Update the ticket
+        return self.auth.putx(
+            url = url,
+            data=dict_attr
+        )
          
-    def update() -> Ticket: 
-        # TODO(Implement)
-        pass
+    def update(self) -> dict: 
+
+        # * Create the url
+        url = self.URL_PREFIX.format(self.id)
+
+        # * Update the ticket
+        return self.auth.putx(
+            url = url,
+            data=self.asdict()
+        )
     
     def create_task() -> Task: 
         # TODO(Implement)
@@ -79,5 +120,9 @@ class Ticket(TicketModel):
         pass
     
     def get_task() -> Task: 
+        # TODO(Implement)
+        pass
+
+    def add_note() -> bool: 
         # TODO(Implement)
         pass

@@ -1,4 +1,4 @@
-import os, requests
+import os, requests, json
 from requests import Session
 from freshservice.models.exceptions import FreshserviceResourceNotFound, FreshserviceBadRequest
 
@@ -30,6 +30,14 @@ class Auth:
 
         # * Make the API call
         response = self.session.get(self.url_prefix + url)
+
+        # * Parse to response checker and return the outcome
+        return self.__response_checker(response=response)
+
+    def putx(self, url, data) -> dict:
+
+        # * Make the API call
+        response = self.session.put(self.url_prefix + url, data=json.dumps(data))
 
         # * Parse to response checker and return the outcome
         return self.__response_checker(response=response)

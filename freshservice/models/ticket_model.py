@@ -63,7 +63,7 @@ class TicketModel(ABC):
     def close() -> None: pass
 
     @abstractmethod
-    def update() -> TicketModel: pass
+    def update() -> dict: pass
 
     @abstractmethod
     def create_task() -> Task: pass
@@ -73,4 +73,7 @@ class TicketModel(ABC):
 
     @abstractmethod
     def get_task() -> Task: pass
+
+    @abstractmethod
+    def add_note() -> bool: pass
     

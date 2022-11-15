@@ -39,7 +39,7 @@ class Change(TicketModel):
         # TODO(Implement)
         pass
     
-    def update() -> Change: 
+    def update() -> dict: 
         # TODO(Implement)
         pass
     
@@ -52,5 +52,9 @@ class Change(TicketModel):
         pass
     
     def get_task() -> Task: 
+        # TODO(Implement)
+        pass
+
+    def add_note() -> bool: 
         # TODO(Implement)
         pass

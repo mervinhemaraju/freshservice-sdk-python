@@ -24,7 +24,7 @@ class Problem(TicketModel):
         # TODO(Implement)
         pass
     
-    def update() -> Problem:
+    def update() -> dict:
         # TODO(Implement)
         pass
     
@@ -37,5 +37,9 @@ class Problem(TicketModel):
         pass
     
     def get_task() -> Task: 
+        # TODO(Implement)
+        pass
+
+    def add_note() -> bool: 
         # TODO(Implement)
         pass
