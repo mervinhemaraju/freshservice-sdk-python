@@ -153,3 +153,6 @@ packages/
 runner.py
 run_dev.sh
 run_tests.sh
+
+# Test files
+test*.py
