@@ -1,8 +1,7 @@
 from __future__ import annotations
 from enum import Enum
-from models.ticket_model import TicketModel
-from models.exceptions import IllegalException
-from models.task import Task
+from freshservice.models.ticket_model import TicketModel
+from freshservice.models.task import Task
 
 class Change(TicketModel):
 
@@ -30,28 +29,13 @@ class Change(TicketModel):
         MEDIUM = 2
         HIGH = 3
         VERY_HIGH = 4
-
-    def __init_subclass__(cls):
-        if Change.__init__ is not cls.__init__:
-            raise IllegalException(f'You are not allowed to override {cls}.__init__')
     
+    @staticmethod
     def create() -> Change: 
         # TODO(Implement)
         pass
 
     def close() -> None: 
-        # TODO(Implement)
-        pass
-    
-    def get() -> Change: 
-        # TODO(Implement)
-        pass
-    
-    def get_all() -> list[Change]: 
-        # TODO(Implement)
-        pass
-    
-    def filter() -> list[Change]: 
         # TODO(Implement)
         pass
     
