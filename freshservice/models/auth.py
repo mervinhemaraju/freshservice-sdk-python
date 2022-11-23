@@ -42,6 +42,14 @@ class Auth:
         # * Parse to response checker and return the outcome
         return self.__response_checker(response=response)
 
+    def postx(self, url, data) -> dict:
+
+        # * Make the API call
+        response = self.session.post(self.url_prefix + url, data=json.dumps(data))
+
+        # * Parse to response checker and return the outcome
+        return self.__response_checker(response=response)
+
     def __response_checker(self, response: requests.models.Response) -> dict:
 
         # * Verify if the request was successful

@@ -10,7 +10,7 @@ class Task:
 
     def __init__(
         self,
-        ticket_id,
+        url,
         id,
         agent_id,
         status,
@@ -22,6 +22,21 @@ class Task:
         closed_at,
         group_id
     ):
+        self.url = url
+        self.id = id
+        self.agent_id = agent_id
+        self.status = status
+        self.due_date = due_date
+        self.title = title
+        self.description = description
+        self.created_at = created_at
+        self.updated_at = updated_at
+        self.closed_at = closed_at
+        self.group_id = group_id
+
+    
+    @staticmethod
+    def create() -> Task:
         # TODO(Implement)
         pass
 

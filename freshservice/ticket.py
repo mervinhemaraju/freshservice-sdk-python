@@ -111,18 +111,47 @@ class Ticket(TicketModel):
             data=self.asdict()
         )
     
-    def create_task() -> Task: 
-        # TODO(Implement)
-        pass
-    
-    def get_tasks() -> list[Task]: 
-        # TODO(Implement)
-        pass
-    
-    def get_task() -> Task: 
-        # TODO(Implement)
-        pass
+    def get_tasks(self) -> list[Task]: 
+        
+        # * Create an extended url
+        extended_url_prefix = self.URL_PREFIX + "/tasks"
 
-    def add_note() -> bool: 
-        # TODO(Implement)
-        pass
+        # * Get all the tasks
+        response =  self.auth.getx(
+            url = extended_url_prefix
+        )
+
+        # * Return the tasks
+        return [
+            Task(
+                url = extended_url_prefix,
+                id=task['id'],
+                agent_id=task["agent_id"],
+                status=task['status'],
+                due_date=task["due_date"],
+                title=task["title"],
+                description=task["description"],
+                created_at=task["created_at"],
+                updated_at=task["updated_at"],
+                closed_at=task["closed_at"],
+                group_id=task["group_id"]
+            )
+            for task in response
+        ]
+    
+    def add_note(self, note, is_private) -> bool: 
+        
+        # * Create an extended url
+        extended_url_prefix = self.URL_PREFIX + "/notes"
+
+        # * Create a data block
+        data = { 
+            "body": note, 
+            "private": is_private 
+        }
+
+        # * Add the note to the ticket
+        return self.auth.postx(
+            url = extended_url_prefix,
+            data=data
+        )
