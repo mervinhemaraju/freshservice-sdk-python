@@ -43,15 +43,7 @@ class Change(TicketModel):
         # TODO(Implement)
         pass
     
-    def create_task() -> Task: 
-        # TODO(Implement)
-        pass
-    
     def get_tasks() -> list[Task]: 
-        # TODO(Implement)
-        pass
-    
-    def get_task() -> Task: 
         # TODO(Implement)
         pass
 

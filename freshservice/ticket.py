@@ -17,16 +17,16 @@ class Ticket(TicketModel):
             
     def __init__(self, id):
 
+        # * Create the url
+        self.url = self.URL_PREFIX.format(id)
+
         # * Try to get the ticket schema
         try:
             # * Create an auth object
             auth = Auth()
 
-            # * Create the url
-            url = self.URL_PREFIX.format(id)
-
             # * Retrieve the ticket details
-            schema = (auth.getx(url=url))['ticket']
+            schema = (auth.getx(url=self.url))['ticket']
 
         except FreshserviceResourceNotFound:
             raise FreshserviceResourceNotFound(f"The ticket {id} cannot be found.")
@@ -69,6 +69,7 @@ class Ticket(TicketModel):
 
         # * Remove unnecessary attributes
         the_dict.pop('id')
+        the_dict.pop('url')
         the_dict.pop('created_at')
         the_dict.pop('updated_at')
         the_dict.pop('description_text')
@@ -79,14 +80,64 @@ class Ticket(TicketModel):
         return the_dict
 
     @staticmethod
-    def create() -> Ticket: 
-        # TODO(Implement)
-        pass
+    def create(
+        requester_email, 
+        subject, 
+        description, 
+        status: Status, 
+        priority: TicketModel.Priority, 
+        department_id = None,
+        group_id = None,
+        category = None,
+        sub_category = None,
+        item_category = None,
+        custom_fields: dict = {}
+    ) -> Ticket: 
+
+        # * Set the URL prefix
+        url_prefix = "/tickets"
+
+        # * Create an auth object
+        auth = Auth()
+
+        # * Get the requester id
+        requesters = auth.getx(
+            url=f"requesters?query=primary_email:'{requester_email}'"
+        )['requesters']
+
+        # * If no requesters are obtained, filter from agents
+        if len(requesters) == 0:
+            requesters = auth.getx(
+                url=f"agents?query=email:'{requester_email}'"
+            )['agents']
+        
+        print(requesters)
+
+        # * Create the data object
+        data = {
+            "requester_id": requesters[0]['id'],
+            "subject": subject,
+            "description": description,
+            "status": status.value,
+            "priority": priority.value,
+            "department_id": department_id,
+            "group_id": group_id,
+            "category": category,
+            "sub_category": sub_category,
+            "item_category": item_category,
+            "custom_fields": custom_fields
+        }
+
+        # * Make the api call
+        response = auth.postx(
+            url=url_prefix,
+            data=data
+        )
+
+        # * Return the ticket object
+        return Ticket(id=response['ticket']['id'])
 
     def close(self) -> None: 
-
-        # * Create the url
-        url = self.URL_PREFIX.format(self.id)
 
         # * Create the dict attributes
         dict_attr = self.asdict()
@@ -96,25 +147,23 @@ class Ticket(TicketModel):
 
         # * Update the ticket
         return self.auth.putx(
-            url = url,
+            url = self.url,
             data=dict_attr
         )
          
     def update(self) -> dict: 
 
-        # * Create the url
-        url = self.URL_PREFIX.format(self.id)
-
         # * Update the ticket
         return self.auth.putx(
-            url = url,
+            url = self.url,
             data=self.asdict()
         )
     
     def get_tasks(self) -> list[Task]: 
         
+        # FIXME(All tasks need to be closed before closing a ticket)
         # * Create an extended url
-        extended_url_prefix = self.URL_PREFIX + "/tasks"
+        extended_url_prefix = self.url + "/tasks"
 
         # * Get all the tasks
         response =  self.auth.getx(
@@ -136,13 +185,13 @@ class Ticket(TicketModel):
                 closed_at=task["closed_at"],
                 group_id=task["group_id"]
             )
-            for task in response
+            for task in response['tasks']
         ]
     
     def add_note(self, note, is_private) -> bool: 
         
         # * Create an extended url
-        extended_url_prefix = self.URL_PREFIX + "/notes"
+        extended_url_prefix = self.url + "/notes"
 
         # * Create a data block
         data = { 

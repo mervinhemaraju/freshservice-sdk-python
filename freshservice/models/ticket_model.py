@@ -66,13 +66,7 @@ class TicketModel(ABC):
     def update() -> dict: pass
 
     @abstractmethod
-    def create_task() -> Task: pass
-
-    @abstractmethod
     def get_tasks() -> list[Task]: pass
-
-    @abstractmethod
-    def get_task() -> Task: pass
 
     @abstractmethod
     def add_note() -> bool: pass

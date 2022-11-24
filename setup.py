@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as rm:
 
 # * Build the setup()
 setup(
-    name="freshservice-python",
+    name="freshservice-sdk-python",
     version="0.0.1",
     author="Mervin Hemaraju",
     author_email="th3pl4gu33@gmail.com",
@@ -15,7 +15,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/mervinhemaraju/freshservice-python",
     packages=find_packages(exclude=['*tests*', 'docs']),
-    install_requires=[],
+    install_requires=["requests"],
     test_suite="tests",
     python_requires=">=3.7",
 )
