@@ -1,9 +1,9 @@
 from __future__ import annotations
 from enum import Enum
-from freshservice.models.ticket_model import TicketModel
-from freshservice.models.task import Task
+from freshservice.v2.models.ticket_model import TicketModel
+from freshservice.v2.models.task import Task
 
-class Change(TicketModel):
+class Problem(TicketModel):
 
     class Impact(Enum):
         LOW = 1
@@ -12,26 +12,11 @@ class Change(TicketModel):
 
     class Status(Enum):
         OPEN = 1
-        PLANNING = 2
-        APPROVAL = 3
-        PENDING_RELEASE = 4
-        PENDING_REVIEW = 5
-        CLOSED = 6
-
-    class Type(Enum):
-        MINOR = 1
-        STANDARD = 2
-        MAJOR = 3
-        EMERGENCY = 4
-
-    class Risk(Enum):
-        LOW = 1
-        MEDIUM = 2
-        HIGH = 3
-        VERY_HIGH = 4
+        CHANGE_REQUESTED = 2
+        CLOSED = 3
     
     @staticmethod
-    def create() -> Change: 
+    def create() -> Problem:
         # TODO(Implement)
         pass
 
@@ -39,7 +24,7 @@ class Change(TicketModel):
         # TODO(Implement)
         pass
     
-    def update() -> dict: 
+    def update() -> dict:
         # TODO(Implement)
         pass
     

@@ -1,8 +1,8 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from enum import Enum
-from freshservice.models.auth import Auth
-from freshservice.models.task import Task
+from freshservice.v2.models.auth import Auth
+from freshservice.v2.models.task import Task
 
 class TicketModel(ABC):
     

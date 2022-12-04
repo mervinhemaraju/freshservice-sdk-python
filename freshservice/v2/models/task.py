@@ -1,6 +1,6 @@
 from __future__ import annotations
 from enum import Enum
-from freshservice.models.auth import Auth
+from freshservice.v2.models.auth import Auth
 
 class Task:
 
@@ -21,7 +21,8 @@ class Task:
         created_at,
         updated_at,
         closed_at,
-        group_id
+        group_id,
+        notify_before
     ):
         self.url = url + f"/{id}"
         self.id = id
@@ -34,6 +35,7 @@ class Task:
         self.updated_at = updated_at
         self.closed_at = closed_at
         self.group_id = group_id
+        self.notify_before = notify_before
 
     def asdict(self):
 
@@ -51,9 +53,40 @@ class Task:
         return the_dict
     
     @staticmethod
-    def create() -> Task:
-        # TODO(Implement)
-        pass
+    def create(
+        url,
+        ticket_id,
+        agent_id,
+        title,
+        description,
+        group_id,
+        notify_before = 0,
+        status = Status.OPEN,
+        due_date = None,
+    ) -> Task:
+        
+        # * Create the URL
+        url = url + f"/{ticket_id}/tasks"
+
+        # * Create an auth object
+        auth = Auth()
+
+        # * Construct the data
+        data = {
+            "agent_id": agent_id,
+            "title": title,
+            "description": description,
+            "group_id": group_id,
+            "notify_before": notify_before,
+            "status": status.value,
+            "due_date": due_date
+        }
+
+        # * Make the api call
+        return auth.postx(
+            url=url,
+            data=data
+        )
 
     def update(self, auth: Auth) -> dict:
         

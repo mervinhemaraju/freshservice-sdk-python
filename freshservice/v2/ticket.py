@@ -1,9 +1,9 @@
 from __future__ import annotations
 from enum import Enum
-from freshservice.models.exceptions import FreshserviceResourceNotFound, FreshserviceTicketException
-from freshservice.models.ticket_model import TicketModel
-from freshservice.models.task import Task
-from freshservice.models.auth import Auth
+from freshservice.v2.models.exceptions import FreshserviceResourceNotFound, FreshserviceTicketException
+from freshservice.v2.models.ticket_model import TicketModel
+from freshservice.v2.models.task import Task
+from freshservice.v2.models.auth import Auth
 
 class Ticket(TicketModel):
 

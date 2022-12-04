@@ -1,6 +1,6 @@
 import os, requests, json
 from requests import Session
-from freshservice.models.exceptions import FreshserviceResourceNotFound, FreshserviceBadRequest
+from freshservice.v2.models.exceptions import FreshserviceResourceNotFound, FreshserviceBadRequest
 
 class Auth:
 
