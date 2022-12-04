@@ -31,7 +31,7 @@ class Ticket(TicketModel):
         except FreshserviceResourceNotFound:
             raise FreshserviceResourceNotFound(f"The ticket {id} cannot be found.")
         except Exception as e:
-            raise FreshserviceTicketException(f"Error occurred while getting {id}: {e}")
+            raise FreshserviceTicketException(f"Error occurred while getting ticket {id}: {e}")
 
         # * Unique class attributes
         self.attachments = schema.get('attachments', None)
