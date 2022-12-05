@@ -1,20 +1,41 @@
 from __future__ import annotations
 from enum import Enum
-from freshservice.models.exceptions import FreshserviceResourceNotFound, FreshserviceTicketException
-from freshservice.models.ticket_model import TicketModel
-from freshservice.models.task import Task
-from freshservice.models.auth import Auth
+from datetime import datetime
+from freshservice.v2.models.ticket_model import TicketModel
+from freshservice.v2.models.task import Task
+from freshservice.v2.models.auth import Auth
+from freshservice.v2.models.exceptions import FreshserviceResourceNotFound, FreshserviceTicketException
 
-class Ticket(TicketModel):
+# TODO("Add compatibility to assets")
+class Change(TicketModel):
 
-    URL_PREFIX = "tickets/{}"
+    URL_PREFIX = "changes/{}"
+
+    class Impact(Enum):
+        LOW = 1
+        MEDIUM = 2
+        HIGH = 3
 
     class Status(Enum):
-        OPEN = 2
-        PENDING = 3
-        RESOLVED = 4
-        CLOSED = 5
-            
+        OPEN = 1
+        PLANNING = 2
+        APPROVAL = 3
+        PENDING_RELEASE = 4
+        PENDING_REVIEW = 5
+        CLOSED = 6
+
+    class Type(Enum):
+        MINOR = 1
+        STANDARD = 2
+        MAJOR = 3
+        EMERGENCY = 4
+
+    class Risk(Enum):
+        LOW = 1
+        MEDIUM = 2
+        HIGH = 3
+        VERY_HIGH = 4
+      
     def __init__(self, id):
 
         # * Create the url
@@ -26,19 +47,22 @@ class Ticket(TicketModel):
             auth = Auth()
 
             # * Retrieve the ticket details
-            schema = (auth.getx(url=self.url))['ticket']
+            schema = (auth.getx(url=self.url))['change']
 
         except FreshserviceResourceNotFound:
-            raise FreshserviceResourceNotFound(f"The ticket {id} cannot be found.")
+            raise FreshserviceResourceNotFound(f"The change {id} cannot be found.")
         except Exception as e:
-            raise FreshserviceTicketException(f"Error occurred while getting {id}: {e}")
+            raise FreshserviceTicketException(f"Error occurred while getting change {id}: {e}")
 
         # * Unique class attributes
-        self.attachments = schema.get('attachments', None)
-        self.email = schema.get('email', None)
-        self.name = schema.get('name', None)
-        self.tags = schema.get('tags', None)
-        self.type = schema.get('type', None)
+        self.risk = schema['risk']
+        self.change_type = schema['change_type']
+        self.approval_status = schema.get('approval_status', None)
+        self.planned_start_date = schema.get('planned_start_date', None)
+        self.planned_end_date = schema.get('planned_end_date', None)
+        self.maintenance_window = schema.get('maintenance_window', None)
+        self.blackout_window = schema.get('blackout_window', None)
+
 
         # * Pass values to the parent class
         super().__init__(
@@ -74,28 +98,29 @@ class Ticket(TicketModel):
         the_dict.pop('updated_at')
         the_dict.pop('description_text')
         the_dict.pop('auth')
-        the_dict.pop('attachments')
 
         # * Return the dict
         return the_dict
 
     @staticmethod
     def create(
-        requester_email, 
-        subject, 
-        description, 
-        status: Status, 
-        priority: TicketModel.Priority, 
-        department_id = None,
-        group_id = None,
-        category = None,
-        sub_category = None,
-        item_category = None,
-        custom_fields: dict = {}
-    ) -> Ticket: 
+        requester_email: str,
+        subject: str,
+        description: str,
+        department_id, 
+        group_id, 
+        category,
+        sub_category,
+        item_category,
+        custom_fields,
+        planned_start_date: datetime,
+        planned_end_date: datetime,
+        priority: TicketModel.Priority = TicketModel.Priority.LOW,
+        planning_fields = {}
+    ) -> Change: 
 
         # * Set the URL prefix
-        url_prefix = "/tickets"
+        url_prefix = "/changes"
 
         # * Create an auth object
         auth = Auth()
@@ -118,14 +143,18 @@ class Ticket(TicketModel):
             "requester_id": requesters[0]['id'],
             "subject": subject,
             "description": description,
-            "status": status.value,
+            "status": Change.Status.OPEN,
             "priority": priority.value,
             "department_id": department_id,
             "group_id": group_id,
             "category": category,
             "sub_category": sub_category,
             "item_category": item_category,
-            "custom_fields": custom_fields
+            "custom_fields": custom_fields,
+            "priority": priority.value,
+            "planned_start_date": planned_start_date,
+            "planned_end_date": planned_end_date,
+            "planning_fields": planning_fields 
         }
 
         # * Make the api call
@@ -135,7 +164,7 @@ class Ticket(TicketModel):
         )
 
         # * Return the ticket object
-        return Ticket(id=response['ticket']['id'])
+        return Change(id=response['change']['id'])
 
     def close(self) -> None: 
 
@@ -150,7 +179,7 @@ class Ticket(TicketModel):
             url = self.url,
             data=dict_attr
         )
-         
+    
     def update(self) -> dict: 
 
         # * Update the ticket
@@ -161,7 +190,7 @@ class Ticket(TicketModel):
     
     def get_tasks(self) -> list[Task]: 
         
-        # FIXME(All tasks need to be closed before closing a ticket)
+        # FIXME(All tasks need to be closed before closing a change)
         # * Create an extended url
         extended_url_prefix = self.url + "/tasks"
 
@@ -187,7 +216,7 @@ class Ticket(TicketModel):
             )
             for task in response['tasks']
         ]
-    
+
     def add_note(self, note, is_private) -> bool: 
         
         # * Create an extended url
