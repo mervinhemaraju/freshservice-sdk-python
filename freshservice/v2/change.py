@@ -86,22 +86,6 @@ class Change(TicketModel):
             item_category=schema['item_category']
         )
 
-    def asdict(self):
-
-        # * Convert class attributes to dict
-        the_dict = dict(vars(self))
-
-        # * Remove unnecessary attributes
-        the_dict.pop('id')
-        the_dict.pop('url')
-        the_dict.pop('created_at')
-        the_dict.pop('updated_at')
-        the_dict.pop('description_text')
-        the_dict.pop('auth')
-
-        # * Return the dict
-        return the_dict
-
     @staticmethod
     def create(
         requester_email: str,
@@ -166,7 +150,23 @@ class Change(TicketModel):
         # * Return the ticket object
         return Change(id=response['change']['id'])
 
-    def close(self) -> None: 
+    def asdict(self) -> dict:
+
+        # * Convert class attributes to dict
+        the_dict = dict(vars(self))
+
+        # * Remove unnecessary attributes
+        the_dict.pop('id')
+        the_dict.pop('url')
+        the_dict.pop('created_at')
+        the_dict.pop('updated_at')
+        the_dict.pop('description_text')
+        the_dict.pop('auth')
+
+        # * Return the dict
+        return the_dict
+    
+    def close(self) -> dict: 
 
         # * Create the dict attributes
         dict_attr = self.asdict()
@@ -217,7 +217,7 @@ class Change(TicketModel):
             for task in response['tasks']
         ]
 
-    def add_note(self, note, is_private) -> bool: 
+    def add_note(self, note: str, is_private: bool) -> bool: 
         
         # * Create an extended url
         extended_url_prefix = self.url + "/notes"
