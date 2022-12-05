@@ -178,8 +178,122 @@ change.close()
 
 ## Problems
 
+You can manipulate problems using the `Problem` model from the sdk. The `Problem` model will handle [this](https://api.freshservice.com/#problems) part of the api in freshservice.
+
+You can import the model as shown below:
+
 ```
-Coming soon
+from freshservice.v2.problem import Problem
+```
+
+### Creating a problem
+
+```
+from freshservice.v2.problem import Problem
+
+problem = Problem.create(
+	requester_email, 
+        subject, 
+        description, 
+        status: Status, 
+        priority: TicketModel.Priority, 
+        department_id = None,
+        group_id = None,
+        category = None,
+        sub_category = None,
+        item_category = None,
+        custom_fields: dict = {}
+)
+```
+
+### Fetching a problem
+
+You can fetch a problem by providing the problem id when initializing the problem object as shown below.
+
+This will go and fetch the problem details.
+
+```
+from freshservice.v2.problem import Problem
+
+problem = Problem(
+	id=your_problem_id
+)
+
+```
+### Updating a problem
+
+To update a problem, you can just update the problem's attribute and then hit the `update()` on the problem's object to update it.
+
+```
+from freshservice.v2.problem import Problem
+
+problem.subject = "new subject"
+problem.description = "new description"
+problem.update()
+
+```
+### Closing a problem
+
+Closing a problem works similarly to updating it. You can set all the required attributes of the problem to match the problem closure rules and then hit the `close()` function
+
+```
+from freshservice.v2.problem import Problem
+
+problem.category = "Other"
+problem.close()
+```
+
+## Tasks
+
+You can manipulate tasks as well for tickets, changes and problems.
+
+To get all tasks for a specific ticket, use the `get_tasks()` from the ticket object and this will return a list of
+`Task`s objects to manipulate
+
+Below is an example with ticket (This works the same for change and problems as well)
+
+```
+from freshservice.v2.ticket import Ticket
+
+ticket = Ticket(id=3)
+
+tasks = ticket.get_tasks()
+```
+
+### Creating a task
+
+```
+from freshservice.v2.models.task import Task
+
+task = Task.create(
+    url,
+    ticket_id,
+    agent_id,
+    title,
+    description,
+    group_id,
+    notify_before = 0,
+    status = Status.OPEN,
+    due_date = None,
+) 
+```
+
+### Updating a task
+
+To update a task, you can just update the task's attribute and then hit the `update()` on the task's object to update it.
+
+```
+task.title = "new title"
+task.description = "new description"
+task.update()
+
+```
+### Closing a task
+
+Closing a task works similarly to updating it. You can set all the required attributes of the task to match the problem task rules and then hit the `close()` function
+
+```
+task.close()
 ```
 
 ## Building the SDK

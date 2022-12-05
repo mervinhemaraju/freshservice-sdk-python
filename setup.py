@@ -7,7 +7,7 @@ with open("README.md", "r", encoding="utf-8") as rm:
 # * Build the setup()
 setup(
     name="freshservice-sdk-python",
-    version="0.0.2",
+    version="0.0.3",
     author="Mervin Hemaraju",
     author_email="th3pl4gu33@gmail.com",
     description="An unofficial freshservice API v2 SDK written in Python.",

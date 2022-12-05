@@ -62,23 +62,6 @@ class Ticket(TicketModel):
             item_category=schema['item_category']
         )
 
-    def asdict(self):
-
-        # * Convert class attributes to dict
-        the_dict = dict(vars(self))
-
-        # * Remove unnecessary attributes
-        the_dict.pop('id')
-        the_dict.pop('url')
-        the_dict.pop('created_at')
-        the_dict.pop('updated_at')
-        the_dict.pop('description_text')
-        the_dict.pop('auth')
-        the_dict.pop('attachments')
-
-        # * Return the dict
-        return the_dict
-
     @staticmethod
     def create(
         requester_email, 
@@ -110,8 +93,6 @@ class Ticket(TicketModel):
             requesters = auth.getx(
                 url=f"agents?query=email:'{requester_email}'"
             )['agents']
-        
-        print(requesters)
 
         # * Create the data object
         data = {
@@ -137,7 +118,24 @@ class Ticket(TicketModel):
         # * Return the ticket object
         return Ticket(id=response['ticket']['id'])
 
-    def close(self) -> None: 
+    def asdict(self) -> dict:
+
+        # * Convert class attributes to dict
+        the_dict = dict(vars(self))
+
+        # * Remove unnecessary attributes
+        the_dict.pop('id')
+        the_dict.pop('url')
+        the_dict.pop('created_at')
+        the_dict.pop('updated_at')
+        the_dict.pop('description_text')
+        the_dict.pop('auth')
+        the_dict.pop('attachments')
+
+        # * Return the dict
+        return the_dict
+
+    def close(self) -> dict: 
 
         # * Create the dict attributes
         dict_attr = self.asdict()
@@ -188,7 +186,7 @@ class Ticket(TicketModel):
             for task in response['tasks']
         ]
     
-    def add_note(self, note, is_private) -> bool: 
+    def add_note(self, note: str, is_private: bool) -> bool: 
         
         # * Create an extended url
         extended_url_prefix = self.url + "/notes"

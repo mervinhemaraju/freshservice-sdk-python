@@ -60,14 +60,17 @@ class TicketModel(ABC):
     def create() -> TicketModel: pass
 
     @abstractmethod
-    def close() -> None: pass
+    def asdict(self) -> dict: pass
 
     @abstractmethod
-    def update() -> dict: pass
+    def close(self) -> dict: pass
 
     @abstractmethod
-    def get_tasks() -> list[Task]: pass
+    def update(self) -> dict: pass
 
     @abstractmethod
-    def add_note() -> bool: pass
+    def get_tasks(self) -> list[Task]: pass
+
+    @abstractmethod
+    def add_note(self, note: str, is_private: bool) -> bool: pass
     
