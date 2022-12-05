@@ -1,5 +1,6 @@
 from __future__ import annotations
 from enum import Enum
+from datetime import datetime
 from freshservice.v2.models.ticket_model import TicketModel
 from freshservice.v2.models.task import Task
 from freshservice.v2.models.auth import Auth
@@ -102,13 +103,82 @@ class Change(TicketModel):
         return the_dict
 
     @staticmethod
-    def create() -> Change: 
-        # TODO(Implement)
-        pass
+    def create(
+        requester_email: str,
+        subject: str,
+        description: str,
+        department_id, 
+        group_id, 
+        category,
+        sub_category,
+        item_category,
+        custom_fields,
+        planned_start_date: datetime,
+        planned_end_date: datetime,
+        priority: TicketModel.Priority = TicketModel.Priority.LOW,
+        planning_fields = {}
+    ) -> Change: 
 
-    def close() -> None: 
-        # TODO(Implement)
-        pass
+        # * Set the URL prefix
+        url_prefix = "/changes"
+
+        # * Create an auth object
+        auth = Auth()
+
+        # * Get the requester id
+        requesters = auth.getx(
+            url=f"requesters?query=primary_email:'{requester_email}'"
+        )['requesters']
+
+        # * If no requesters are obtained, filter from agents
+        if len(requesters) == 0:
+            requesters = auth.getx(
+                url=f"agents?query=email:'{requester_email}'"
+            )['agents']
+        
+        print(requesters)
+
+        # * Create the data object
+        data = {
+            "requester_id": requesters[0]['id'],
+            "subject": subject,
+            "description": description,
+            "status": Change.Status.OPEN,
+            "priority": priority.value,
+            "department_id": department_id,
+            "group_id": group_id,
+            "category": category,
+            "sub_category": sub_category,
+            "item_category": item_category,
+            "custom_fields": custom_fields,
+            "priority": priority.value,
+            "planned_start_date": planned_start_date,
+            "planned_end_date": planned_end_date,
+            "planning_fields": planning_fields 
+        }
+
+        # * Make the api call
+        response = auth.postx(
+            url=url_prefix,
+            data=data
+        )
+
+        # * Return the ticket object
+        return Change(id=response['change']['id'])
+
+    def close(self) -> None: 
+
+        # * Create the dict attributes
+        dict_attr = self.asdict()
+
+        # * Change the status of the ticket to close
+        dict_attr['status'] = self.Status.CLOSED.value
+
+        # * Update the ticket
+        return self.auth.putx(
+            url = self.url,
+            data=dict_attr
+        )
     
     def update(self) -> dict: 
 

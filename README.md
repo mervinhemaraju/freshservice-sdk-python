@@ -40,13 +40,13 @@ You can manipulate tickets using the `Ticket` model from the sdk. The `Ticket` m
 You can import the model as shown below:
 
 ```
-from freshservice.v2 import Ticket
+from freshservice.v2.ticket import Ticket
 ```
 
 ### Creating a ticket
 
 ```
-from freshservice.v2 import Ticket
+from freshservice.v2.ticket import Ticket
 
 ticket = Ticket.create(
 	requester_email, 
@@ -70,7 +70,7 @@ You can fetch a ticket by providing the ticket id when initializing the ticket o
 This will go and fetch the ticket details.
 
 ```
-from freshservice.v2 import Ticket
+from freshservice.v2.ticket import Ticket
 
 ticket = Ticket(
 	id=your_ticket_id
@@ -83,7 +83,7 @@ ticket = Ticket(
 To update a ticket, you can just update the ticket's attribute and then hit the `update()` on the ticket's object to update it.
 
 ```
-from freshservice import Ticket
+from freshservice.v2.ticket import Ticket
 
 ticket.subject = "new subject"
 ticket.description = "new description"
@@ -96,7 +96,7 @@ ticket.update()
 Closing a ticket works similarly to updating it. You can set all the required attributes of the ticket to match the ticket closure rules and then hit the `close()` function
 
 ```
-from freshservice.v2 import Ticket
+from freshservice.v2.ticket import Ticket
 
 ticket.category = "Other"
 ticket.close()
@@ -105,7 +105,75 @@ ticket.close()
 ## Changes
 
 ```
-Coming soon
+You can manipulate changes using the `Change` model from the sdk. The `Change` model will handle [this](https://api.freshservice.com/#changes) part of the api in freshservice.
+
+You can import the model as shown below:
+
+```
+
+from freshservice.v2.change import Change
+
+### Creating a Change
+
+from freshservice.v2 import Change
+
+```
+from freshservice.v2.change import Change
+
+Change.create(
+    requester_email: str,
+    subject: str,
+    description: str,
+    department_id, 
+    group_id, 
+    category,
+    sub_category,
+    item_category,
+    custom_fields,
+    planned_start_date: datetime,
+    planned_end_date: datetime,
+    priority: TicketModel.Priority = TicketModel.Priority.LOW,
+    planning_fields = {}
+)
+```
+
+### Fetching a change
+
+You can fetch a change by providing the change id when initializing the change object as shown below.
+
+This will go and fetch the change details.
+
+```
+from freshservice.v2.change import Change
+
+change = Change(
+        id=your_change_id
+)
+
+```
+
+### Updating a change
+
+To update a change, you can just update the change's attribute and then hit the `update()` on the change's object to update it.
+
+```
+from freshservice.v2.change import Change
+
+change.subject = "new subject"
+change.description = "new description"
+change.update()
+```
+
+### Closing a change
+
+Closing a change works similarly to updating it. You can set all the required attributes of the change to match the ticket closure rules and then hit the `close()` function
+
+```
+from freshservice.v2.change import Change
+
+change.category = "Other"
+change.close()
+
 ```
 
 ## Problems
@@ -124,30 +192,3 @@ In most cases, you won't need to build the SDK from source. If you want to build
 ## Contributing
 
 We're happy to accept contributions and PRs!
-
-[](https://pypi.org/project/freshservice-sdk-python/#modal-close "Close")###
-
-|          |   |   |
-| -------- | - | - |
-| -------- |   |   |
-|          |   |   |
-| -        | - | - |
-|          |   |   |
-|          |   |   |
-
-[](https://pypi.org/project/freshservice-sdk-python/#modal-close
-
-This sdk is an unofficial freshservice API v2 SDK written in Python.
-
-The library is based on the official Freshservice api found [here](https://api.freshservice.com/)
-
-It currently supports the manipulation of resources listed below:
-
-* Tickets
-* Changes
-* Problems
-* Tasks (tickets, changes and problems)
-
-```
-Under construction
-```
